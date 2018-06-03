@@ -36,7 +36,8 @@ class App extends Component {
   };
   fetchItems = (payload) => {
     let result = this.callGetApi();
-    return Promise.resolve(result);
+    console.log("result",result);
+    return result;
   };
   callGetApi = async () => {
     const response = await fetch('/api/products');
@@ -48,23 +49,33 @@ class App extends Component {
     const self=this;
     axios.post('/api/products', product).then((res,err) =>{
       if (err) return console.log(err);
-      // console.log(res);
+      self.fetchItems();
+    });
+  };
+  callDeleteApi=async (product_id) => {
+    const self=this;
+    axios.delete(`/api/products/${product_id}`).then((res,err) =>{
+      if (err) return console.log(err);
+      console.log('res',res);
+      self.fetchItems();
+    });
+  };
+  callUpdateApi=async (product) => {
+    const self=this;
+    axios.patch(`/api/products/${product._id}`,{"url":product.url,"price":
+    product.price,"quantity":product.quantity,"title":product.title}).then((res,err) =>{
+      if (err) return console.log(err);
       self.fetchItems();
     });
   };
   create = (product) => {
     return this.callPostApi(product);
   };
-  update = (data) => {
-    const task = this.tasks.find(t => t.id === data.id);
-    task.title = data.title;
-    task.description = data.description;
-    return Promise.resolve(task);
+  update = (product) => {
+    return this.callUpdateApi(product);
   };
-  delete = (data) => {
-    const task = this.tasks.find(t => t.id === data.id);
-    //tasks = this.tasks.filter(t => t.id !== task.id);
-    return Promise.resolve(task);
+  delete = (product) => {
+    return this.callDeleteApi(product._id);
   };
   Example = () => ( <
     div style = {
@@ -136,13 +147,12 @@ class App extends Component {
     message = "Update product"
     trigger = "Update"
     onSubmit = {
-      task => this.update(task)
+      product => this.update(product)
     }
     submitText = "Update"
     validate = {
       (values) => {
         const errors = {};
-
         if (!values.title) {
           errors.title = 'Please, provide product\'s title';
         }
@@ -169,19 +179,12 @@ class App extends Component {
     message = "Are you sure you want to delete the product?"
     trigger = "Delete"
     onSubmit = {
-      task => this.delete(task)
+      product => this.delete(product)
     }
     submitText = "Delete"
-    validate = {
-      (values) => {
-        const errors = {};
-        if (!values.id) {
-          errors.id = 'Please, provide id';
-        }
-        return errors;
-      }
-    }
-    /> <
+    />
+
+     <
     /CRUDTable> <
     /div>
   );
@@ -191,18 +194,6 @@ class App extends Component {
       width: 'fit-content'
     },
   };
-  tasks = [{
-      id: 1,
-      title: 'Create an example',
-      description: 'Create an example of how to use the component',
-    },
-    {
-      id: 2,
-      title: 'Improve',
-      description: 'Improve the component!',
-    },
-  ];
-  count = this.tasks.length;
   render() {
     this.Example.propTypes = {};
     return ( <

@@ -45,13 +45,15 @@ app.patch('/api/products/:id',(req, res) => {
   clientPromise.then(client => {
     const db = client.service('mongodb', 'mongodb-atlas').db('suventure');
     client.authenticate("anon").then(() =>
-      db.collection('product').updateOne({_id:req.param.id},{$set:
+      db.collection('product').updateOne({_id:ObjectId(req.params.id)},{$set:
         req.body}, function (err, post) {
           if (err) return console.log(err);
-          res.json(post);
-      }, {upsert:true})
-    ).catch(err => {
-      console.log('error on create-product',err)
+          // res.json(post);
+      })
+    ).then(docs => {
+      res.send("updated")
+    }).catch(err => {
+      console.log('error on update-product',err)
     });
   });
 });
@@ -61,22 +63,25 @@ app.delete('/api/products/:id',(req, res) => {
   clientPromise.then(client => {
     const db = client.service('mongodb', 'mongodb-atlas').db('suventure');
     client.authenticate("anon").then(() =>
-      db.collection('product').deleteOne({id:ObjectId(req.param.id)})
-    ).catch(err => {
-      console.log('error on create-product',err)
+      db.collection('product').deleteOne({_id:ObjectId(req.params.id)})
+    ).then(docs => {
+      res.send('deleted product')
+    }).catch(err => {
+      console.log('error on delete-product',err)
     });
   });
 });
 
 app.get('/api/products/:id',(req, res) => {
   clientPromise.then(client => {
+    console.log("req.params.id",req.params.id);
     const db = client.service('mongodb', 'mongodb-atlas').db('suventure');
     client.authenticate("anon").then(() =>
-      db.collection('product').find({id:req.param.id}).limit(100).execute()
+      db.collection('product').findOne({_id:ObjectId(req.params.id)})
     ).then(docs => {
-      console.log("Found docs", docs)
+      res.send(docs)
     }).catch(err => {
-      console.log('error on view-product',err)
+    console.log('error on view-product',err)
     });
   });
 });
