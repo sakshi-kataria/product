@@ -1,8 +1,9 @@
-import React, { Component } from 'react';
+import React, {
+  Component
+} from 'react';
 import './App.css';
 import axios from 'axios';
-import CRUDTable,
-{
+import CRUDTable, {
   Fields,
   Field,
   CreateForm,
@@ -33,145 +34,164 @@ class App extends Component {
 
     return sorter;
   };
-  fetchItems= (payload) => {
+  fetchItems = (payload) => {
     let result = this.callGetApi();
     return Promise.resolve(result);
   };
   callGetApi = async () => {
-     const response = await fetch('/api/products');
-     const body = await response.json();
-     if (response.status !== 200) throw Error(body.message);
-     return body;
-   };
-   callPostApi= async (product) => {
-      const response = await axios.post('/api/products',product);
-      const body = await response.json();
-      if (response.status !== 200) throw Error(body.message);
-      return body;
+    const response = await fetch('/api/products');
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    return body;
   };
-  create= (product) => {
-    this.callPostApi(product);
-    this.fetchItems();
+  callPostApi = async (product) => {
+    const self=this;
+    axios.post('/api/products', product).then((res,err) =>{
+      if (err) return console.log(err);
+      // console.log(res);
+      self.fetchItems();
+    });
   };
-  update= (data) => {
-      const task = this.tasks.find(t => t.id === data.id);
-      task.title = data.title;
-      task.description = data.description;
-      return Promise.resolve(task);
-    };
-  delete= (data) => {
-      const task = this.tasks.find(t => t.id === data.id);
-      //tasks = this.tasks.filter(t => t.id !== task.id);
-      return Promise.resolve(task);
-    };
-  Example = () => (
-    <div style={this.styles.container}>
-      <CRUDTable
-        caption="Products"
-        fetchItems={payload => this.fetchItems(payload)}
-      >
-        <Fields>
+  create = (product) => {
+    return this.callPostApi(product);
+  };
+  update = (data) => {
+    const task = this.tasks.find(t => t.id === data.id);
+    task.title = data.title;
+    task.description = data.description;
+    return Promise.resolve(task);
+  };
+  delete = (data) => {
+    const task = this.tasks.find(t => t.id === data.id);
+    //tasks = this.tasks.filter(t => t.id !== task.id);
+    return Promise.resolve(task);
+  };
+  Example = () => ( <
+    div style = {
+      this.styles.container
+    } >
+    <
+    CRUDTable caption = "Products"
+    fetchItems = {
+      payload => this.fetchItems(payload)
+    } >
+    <
+    Fields >
 
-          <Field
-            name="title"
-            label="Title"
-            placeholder="Title"
-          />
-          <Field
-            name="price"
-            label="Price"
-            placeholder="Price"
-          />
-          <Field
-            name="quantity"
-            label="Quantity"
-            placeholder='Quantity'
-          />
-          <Field
-            name="url"
-            label="URL"
-            placeholder='URL'
-          />
-        </Fields>
-        <CreateForm
-          title="Product Creation"
-          message="Create a new product!"
-          trigger="Create Product"
-          onSubmit={task => this.create(task)}
-          submitText="Create"
-          validate={(values) => {
-            const errors = {};
-            if (!values.title) {
-              errors.title = 'Please, provide product\'s title';
-            }
+    <
+    Field name = "title"
+    label = "Title"
+    placeholder = "Title" /
+    >
+    <
+    Field name = "price"
+    label = "Price"
+    placeholder = "Price" /
+    >
+    <
+    Field name = "quantity"
+    label = "Quantity"
+    placeholder = 'Quantity' /
+    >
+    <
+    Field name = "url"
+    label = "URL"
+    placeholder = 'URL' /
+    >
+    <
+    /Fields> <
+    CreateForm title = "Product Creation"
+    message = "Create a new product!"
+    trigger = "Create Product"
+    onSubmit = {
+      product => this.create(product)
+    }
+    submitText = "Create"
+    validate = {
+      (values) => {
+        const errors = {};
+        if (!values.title) {
+          errors.title = 'Please, provide product\'s title';
+        }
 
-            if (!values.price) {
-              errors.description = 'Please, provide product\'s price';
-            }
+        if (!values.price) {
+          errors.description = 'Please, provide product\'s price';
+        }
 
-            if (!values.quantity) {
-              errors.description = 'Please, provide product\'s quantity';
-            }
+        if (!values.quantity) {
+          errors.description = 'Please, provide product\'s quantity';
+        }
 
-            if (!values.url) {
-              errors.description = 'Please, provide product\'s url';
-            }
+        if (!values.url) {
+          errors.description = 'Please, provide product\'s url';
+        }
 
-            return errors;
-          }}
-        />
+        return errors;
+      }
+    }
+    />
 
-        <UpdateForm
-          title="Product update process"
-          message="Update product"
-          trigger="Update"
-          onSubmit={task => this.update(task)}
-          submitText="Update"
-          validate={(values) => {
-            const errors = {};
+    <
+    UpdateForm title = "Product update process"
+    message = "Update product"
+    trigger = "Update"
+    onSubmit = {
+      task => this.update(task)
+    }
+    submitText = "Update"
+    validate = {
+      (values) => {
+        const errors = {};
 
-            if (!values.title) {
-              errors.title = 'Please, provide product\'s title';
-            }
+        if (!values.title) {
+          errors.title = 'Please, provide product\'s title';
+        }
 
-            if (!values.price) {
-              errors.description = 'Please, provide product\'s price';
-            }
+        if (!values.price) {
+          errors.description = 'Please, provide product\'s price';
+        }
 
-            if (!values.quantity) {
-              errors.description = 'Please, provide product\'s quantity';
-            }
+        if (!values.quantity) {
+          errors.description = 'Please, provide product\'s quantity';
+        }
 
-            if (!values.url) {
-              errors.description = 'Please, provide product\'s url';
-            }
+        if (!values.url) {
+          errors.description = 'Please, provide product\'s url';
+        }
 
-            return errors;
-          }}
-        />
+        return errors;
+      }
+    }
+    />
 
-        <DeleteForm
-          title="Product Delete Process"
-          message="Are you sure you want to delete the product?"
-          trigger="Delete"
-          onSubmit={task => this.delete(task)}
-          submitText="Delete"
-          validate={(values) => {
-            const errors = {};
-            if (!values.id) {
-              errors.id = 'Please, provide id';
-            }
-            return errors;
-          }}
-        />
-      </CRUDTable>
-    </div>
+    <
+    DeleteForm title = "Product Delete Process"
+    message = "Are you sure you want to delete the product?"
+    trigger = "Delete"
+    onSubmit = {
+      task => this.delete(task)
+    }
+    submitText = "Delete"
+    validate = {
+      (values) => {
+        const errors = {};
+        if (!values.id) {
+          errors.id = 'Please, provide id';
+        }
+        return errors;
+      }
+    }
+    /> <
+    /CRUDTable> <
+    /div>
   );
   styles = {
-   container: { margin: 'auto', width: 'fit-content' },
+    container: {
+      margin: 'auto',
+      width: 'fit-content'
+    },
   };
-  tasks = [
-    {
+  tasks = [{
       id: 1,
       title: 'Create an example',
       description: 'Create an example of how to use the component',
@@ -185,8 +205,8 @@ class App extends Component {
   count = this.tasks.length;
   render() {
     this.Example.propTypes = {};
-    return (
-      <this.Example />
+    return ( <
+      this.Example / >
     );
   }
 }

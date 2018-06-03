@@ -31,9 +31,11 @@ app.post('/api/products',(req, res) => {
     client.authenticate("anon").then(() =>
       db.collection('product').insertOne(req.body, function (err, post) {
        if (err) return console.log(err);
-       res.json(post);
+       //res.json(post);
       })
-    ).catch(err => {
+    ).then(docs => {
+      res.json(docs)
+    }).catch(err => {
       console.log('error on create-product',err)
     });
   });
