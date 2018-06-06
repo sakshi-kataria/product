@@ -4,7 +4,7 @@
 
 clone project: git clone https://github.com/sakshi-kataria/product
 
-go to go to main product folder
+go to main product folder
 
 npm install
 
