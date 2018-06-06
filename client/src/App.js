@@ -36,7 +36,6 @@ class App extends Component {
   };
   fetchItems = (payload) => {
     let result = this.callGetApi();
-    console.log("result",result);
     return result;
   };
   callGetApi = async () => {
@@ -45,37 +44,31 @@ class App extends Component {
     if (response.status !== 200) throw Error(body.message);
     return body;
   };
-  callPostApi = async (product) => {
-    const self=this;
-    axios.post('/api/products', product).then((res,err) =>{
-      if (err) return console.log(err);
-      self.fetchItems();
-    });
-  };
-  callDeleteApi=async (product_id) => {
-    const self=this;
-    axios.delete(`/api/products/${product_id}`).then((res,err) =>{
-      if (err) return console.log(err);
-      console.log('res',res);
-      self.fetchItems();
-    });
-  };
-  callUpdateApi=async (product) => {
-    const self=this;
-    axios.patch(`/api/products/${product._id}`,{"url":product.url,"price":
-    product.price,"quantity":product.quantity,"title":product.title}).then((res,err) =>{
-      if (err) return console.log(err);
-      self.fetchItems();
-    });
-  };
   create = (product) => {
-    return this.callPostApi(product);
+    const self = this;
+    return axios.post('/api/products', product).then((res, err) => {
+      if (err) return console.log(err);
+      self.fetchItems();
+    });
   };
   update = (product) => {
-    return this.callUpdateApi(product);
+    const self = this;
+    return axios.patch(`/api/products/${product._id}`, {
+      "url": product.url,
+      "price": product.price,
+      "quantity": product.quantity,
+      "title": product.title
+    }).then((res, err) => {
+      if (err) return console.log(err);
+      self.fetchItems();
+    });
   };
   delete = (product) => {
-    return this.callDeleteApi(product._id);
+    const self = this;
+    return axios.delete(`/api/products/${product._id}`).then((res, err) => {
+      if (err) return console.log(err);
+      self.fetchItems();
+    });
   };
   Example = () => ( <
     div style = {
@@ -86,6 +79,7 @@ class App extends Component {
     fetchItems = {
       payload => this.fetchItems(payload)
     } >
+
     <
     Fields >
 
@@ -181,12 +175,12 @@ class App extends Component {
     onSubmit = {
       product => this.delete(product)
     }
-    submitText = "Delete"
-    />
+    submitText = "Delete" /
+    >
 
-     <
-    /CRUDTable> <
-    /div>
+    <
+    /CRUDTable> < /
+    div >
   );
   styles = {
     container: {
